@@ -1,0 +1,84 @@
+<script>
+    /**
+     * Project EMO-SCAPE Frontend Logic
+     */
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const splashScreen = document.getElementById('splash-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const listScreen = document.getElementById('list-screen');
+        const spotsGrid = document.getElementById('spots-grid');
+
+        startBtn.addEventListener('click', () => {
+            switchView(splashScreen, loadingScreen);
+            findEmoSpots();
+        });
+
+        backBtn.addEventListener('click', () => {
+            switchView(listScreen, splashScreen);
+        });
+
+        function switchView(from, to) {
+            from.classList.add('hidden');
+            setTimeout(() => {
+                to.classList.remove('hidden');
+            }, 500);
+        }
+
+        function findEmoSpots() {
+            if (!navigator.geolocation) {
+                alert('お使いのブラウザは位置情報に対応していません。');
+                switchView(loadingScreen, splashScreen);
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    // GASのバックエンドを呼び出し
+                    google.script.run
+                        .withSuccessHandler((spots) => {
+                            renderSpots(spots);
+                            switchView(loadingScreen, listScreen);
+                        })
+                        .withFailureHandler((err) => {
+                            console.error(err);
+                            alert('スポットの取得に失敗しました。');
+                            switchView(loadingScreen, splashScreen);
+                        })
+                        .getEmoSpots(latitude, longitude);
+                },
+                (error) => {
+                    console.error(error);
+                    alert('位置情報を取得できませんでした。');
+                    switchView(loadingScreen, splashScreen);
+                },
+                { enableHighAccuracy: true }
+            );
+        }
+
+        function renderSpots(spots) {
+            spotsGrid.innerHTML = '';
+            spots.forEach(spot => {
+                const card = document.createElement('div');
+                card.className = 'spot-card';
+
+                // Google Maps連携URL
+                const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`;
+
+                card.innerHTML = `
+        <img src="${spot.imageUrl}" alt="${spot.name}" class="spot-image">
+        <div class="spot-info">
+          <h3 class="spot-name">${spot.name}</h3>
+          <p class="spot-desc">${spot.description}</p>
+          <a href="${mapsUrl}" target="_blank" class="map-link">Google Mapsで道順を見る &rarr;</a>
+        </div>
+      `;
+                spotsGrid.appendChild(card);
+            });
+        }
+    });
+</script>

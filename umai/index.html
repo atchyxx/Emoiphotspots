@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>EMO-SCAPE | Discover the Vibe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+  <?!= include('style'); ?>
+</head>
+<body>
+  <div class="background-overlay"></div>
+  
+  <header>
+    <h1>EMO-SCAPE</h1>
+    <p class="subtitle">Finding beauty in the mundane.</p>
+  </header>
+
+  <main id="app-container">
+    <!-- Initial Splash Screen -->
+    <section id="splash-screen" class="view">
+      <div class="content">
+        <h2>Capture the Moment</h2>
+        <p>現在地から最も「エモい」スポットを探索します。</p>
+        <button id="start-btn" class="primary-btn">探索を開始する</button>
+      </div>
+    </section>
+
+    <!-- Loading Screen -->
+    <section id="loading-screen" class="view hidden">
+      <div class="loader-container">
+        <div class="scanner"></div>
+        <p>エモさをスキャン中...</p>
+      </div>
+    </section>
+
+    <!-- List Screen -->
+    <section id="list-screen" class="view hidden">
+      <div id="spots-grid" class="grid">
+        <!-- JS will populate this -->
+      </div>
+      <button id="back-btn" class="secondary-btn">戻る</button>
+    </section>
+
+    <!-- Detail View / Modal would go here if needed -->
+  </main>
+
+  <footer>
+    <p>&copy; 2026 PROJECT EMO-SCAPE - Space Engineers</p>
+  </footer>
+
+  <?!= include('script'); ?>
+</body>
+</html>
